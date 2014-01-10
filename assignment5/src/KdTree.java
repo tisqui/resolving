@@ -1,11 +1,25 @@
 /**
- * Created with IntelliJ IDEA.
- * Date: 12/18/13
- * Time: 2:49 AM
+ * Coursera Algorithms course assignment implementation.
+ * Data type to represent a set of points in the unit square (all points have x- and y-coordinates between 0 and 1)
+ * using a 2d-tree to support efficient range search (find all of the points contained in a query rectangle)
+ * and nearest neighbor search (find a closest point to a query point).
+ * Mutable data type KdTree, 2d-tree which is a generalization of a BST to two-dimensional keys.
+ *
+ * <p>This implementation should support {@code insert()} and {@code contains()} in time proportional to the logarithm
+ * of the number of points in the set in the worst case; support {@code nearest()} and {@code range()} in time
+ * proportional to the number of points in the set.</p>
+ *
+ * <p><strong>Please note that according to assignment requirements </strong> KdTree is created assuming that the
+ * {@code insert()}, {@code contains()}, and {@code nearest()} methods in KdTree are passed points with x- and
+ * y-coordinates between 0 and 1. Also assumed that the {@code range()} method in KdTree is passed a rectangle
+ * that lies in the unit box. </p>
+ *
+ * @author  Galina Kostetskaya
+ *
  */
 public class KdTree {
 
-    private static final boolean VERTICAL = true;
+    private static final boolean VERTICAL = true; //type of node orientation
     private static final boolean HORIZONTAL = false;
 
     private Node root;
@@ -21,32 +35,33 @@ public class KdTree {
 
         public Node(Point2D p) {
             this.point = p;
-
         }
 
         public Node(Point2D p, RectHV r) {
             this.point = p;
             this.rect = r;
         }
-
     }
 
     /**
-     * check if the tree is empty
+     * Check if the tree is empty.
+     * @return boolean, if the tree is empty
      */
     private boolean isEmpty() {
         return (root == null);
     }
 
     /**
-     * find the tree size
+     * Find the tree size. Returns null if the tree is empty.
+     * @return number of the elements in the tree
      */
     private int size() {
         return size;
     }
 
     /**
-     * add the point p to the set (if it is not already in the set)
+     * Add the point p to the set (if it is not already in the set)
+     * @param p Point that we are inserting
      */
     public void insert(Point2D p) {
         if (p != null) {
@@ -54,6 +69,14 @@ public class KdTree {
         }
     }
 
+    /**
+     * Insert the point into the tree, counting hte orientation (vertical/horizontal) starting at the top as orientation
+     * we pass as the parameter.
+     * @param x The node which is processed next
+     * @param p Point we are inserting
+     * @param orientation The orientation of the next point processed (x)
+     * @return node of the tree
+     */
     private Node insert(Node x, Point2D p, boolean orientation) {
         if (x == null) {
             return new Node(p, getRectHV(p.x(), p.y(), orientation));
@@ -78,6 +101,13 @@ public class KdTree {
         return x;
     }
 
+    /**
+     * Get the rectangle for the node point coordinates x,y and node orientation.
+     * @param x x coordinate of the node point
+     * @param y y coordinate of the node point
+     * @param orientation the horizontal/vertical orientation
+     * @return Rectangle obj
+     */
     private RectHV getRectHV(double x, double y, boolean orientation) {
         if (orientation == HORIZONTAL) {
             return new RectHV(0, y,
@@ -89,10 +119,10 @@ public class KdTree {
     }
 
     /**
-     * does the set contain the point p?
+     * Check if the set contains the point p
      *
-     * @param p
-     * @return
+     * @param p The point we want to find in the set
+     * @return If the point is in the set
      */
     public boolean contains(Point2D p) {
         Point2D p1 = get(root, p, VERTICAL);
@@ -128,12 +158,18 @@ public class KdTree {
 
 
     /**
-     * draw all of the points to standard draw
+     * Draw all of the points which are in the set at the current moment to standard draw.
      */
     public void draw() {
         draw(root, VERTICAL);
     }
 
+    /**
+     * Draw all the points rectangles starting from node x.
+     * Red for vertical and blue for horizontal rectangles.
+     * @param x Node we start the drawing from.
+     * @param orientation Orientation of the node x.
+     */
     private void draw(Node x, boolean orientation) {
         if (x == null) {
             return;
@@ -157,10 +193,14 @@ public class KdTree {
 
 
     /**
-     * all points in the set that are inside the rectangle
+     * <p>Find all points in the set that are inside the rectangle.</p>
+     * <p>Finds ind all points contained in a given query rectangle, start at the root and recursively search for
+     * points in both subtrees using the following pruning rule: if the query rectangle does not intersect the
+     * rectangle corresponding to a node, there is no need to explore that node (or its subtrees). A subtree is
+     * searched only if it might contain a point contained in the query rectangle.</p>
      *
-     * @param rect
-     * @return
+     * @param rect Rectangle in the bounds of which we want to find the points.
+     * @return The set of the points which are inside the rectangle.
      */
     public Iterable<Point2D> range(RectHV rect) {
         Queue<Point2D> r = new Queue<Point2D>();
@@ -205,10 +245,15 @@ public class KdTree {
     }
 
     /**
-     * a nearest neighbor in the set to p; null if set is empty
+     * <p>Find a nearest neighbor in the set to the point p.</p>
+     * <p>Returns null if set is empty.</p>
+     * <p>Finds a closest point to a given query point, start at the root and recursively search in both subtrees
+     * using the following pruning rule: if the closest point discovered so far is closer than the distance between
+     * the query point and the rectangle corresponding to a node, there is no need to explore that node (or its
+     * subtrees).</p>
      *
-     * @param p
-     * @return
+     * @param p The point for which we want to find the nearest
+     * @return The point which is the nearest to the p.
      */
     public Point2D nearest(Point2D p) {
         if (root != null) {
