@@ -45,14 +45,14 @@ public class KdTree {
 
     /**
      * Check if the tree is empty.
-     * @return boolean, if the tree is empty
+     * @return boolean
      */
     private boolean isEmpty() {
         return (root == null);
     }
 
     /**
-     * Find the tree size. Returns null if the tree is empty.
+     * Find the tree size. Returns 0 if the tree is empty.
      * @return number of the elements in the tree
      */
     private int size() {
@@ -70,7 +70,7 @@ public class KdTree {
     }
 
     /**
-     * Insert the point into the tree, counting hte orientation (vertical/horizontal) starting at the top as orientation
+     * Insert the point into the tree, counting the orientation (vertical/horizontal) starting at the top as orientation
      * we pass as the parameter.
      * @param x The node which is processed next
      * @param p Point we are inserting
@@ -158,14 +158,14 @@ public class KdTree {
 
 
     /**
-     * Draw all of the points which are in the set at the current moment to standard draw.
+     * Draw all of the points' rectangles which are in the set at the current moment to standard draw.
      */
     public void draw() {
         draw(root, VERTICAL);
     }
 
     /**
-     * Draw all the points rectangles starting from node x.
+     * Draw all the points' rectangles starting from node x.
      * Red for vertical and blue for horizontal rectangles.
      * @param x Node we start the drawing from.
      * @param orientation Orientation of the node x.
@@ -240,8 +240,6 @@ public class KdTree {
                 }
             }
         }
-
-
     }
 
     /**
@@ -263,6 +261,9 @@ public class KdTree {
         }
     }
 
+    /**
+     * Helper class to find the nearest point.
+     */
     private class MinFinder {
 
         private Point2D from;
